@@ -1,6 +1,6 @@
 <script lang="ts">
     import GeoApplet, { loadGeoGebra } from "./svelte/geoApplet.svelte";
-    import {init} from "./ts/main";
+    import { init } from "./ts/main";
 
     const plots = {
         line: {
@@ -74,6 +74,7 @@
         padding: 0;
         height: 100%;
     }
+
     #plots {
         display: grid;
         grid-template-columns: 50vh calc(100vw - 50vh);
@@ -98,5 +99,15 @@
     .plot {
         overflow: hidden;
         border: solid 1px black;
+    }
+
+    @media (max-width: 600px) {
+        #plots {
+            grid-template-columns: 50vw 50vw;
+            grid-template-rows: calc(100vh - 50vw) 50vw;
+            grid-template-areas:
+                "line line"
+                "mb cost";
+        }
     }
 </style>
