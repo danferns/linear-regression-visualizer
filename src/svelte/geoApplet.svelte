@@ -6,7 +6,7 @@
     }
 
     const geoScript = document.createElement("script");
-    geoScript.src = "src/lib/GeoGebra/deployggb.js";
+    geoScript.src = "./lib/GeoGebra/deployggb.js";
     document.head.appendChild(geoScript);
 
     // if it hasn't already, wait until GeoGebra has loaded
@@ -49,7 +49,7 @@
 
     onMount(() => {
         const applet = new window.GGBApplet(params, true);
-        applet.setHTML5Codebase("src/lib/GeoGebra/HTML5/5.0/web3d/");
+        applet.setHTML5Codebase("./lib/GeoGebra/HTML5/5.0/web3d/");
         applet.inject(appletElement);
     });
 
