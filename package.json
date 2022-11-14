@@ -1,8 +1,9 @@
 {
-  "name": "new-project",
-  "private": true,
-  "version": "0.0.0",
+  "name": "linear-regression-visualizer",
+  "version": "0.1.0",
   "type": "module",
+  "author": "Daniel Fernandes",
+  
   "scripts": {
     "dev": "vite",
     "build": "vite build",
