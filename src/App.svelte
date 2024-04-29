@@ -1,6 +1,7 @@
 <script lang="ts">
     import GeoApplet, { loadGeoGebra } from "./svelte/geoApplet.svelte";
-    import { init } from "./ts/main";
+    import { init, startTraining, stopTraining, delay, learningRate } from "./ts/main";
+
 
     const plots = {
         line: {
@@ -33,6 +34,8 @@
             height: 400,
         },
     };
+    
+    let playing = false;
 
     function onLoad(id: string) {
         plots[id].loaded = true;
@@ -41,6 +44,8 @@
         }
         init();
     }
+
+    
 </script>
 
 <main>
@@ -65,6 +70,21 @@
                 </div>
             {/each}
         {/await}
+    </div>
+    
+    <div class="controls">
+        <input type="button" value={!playing ? "Start" : "Stop"} on:click={() => {
+            if (!playing) {
+                startTraining();
+            } else {
+                stopTraining();
+            }
+            playing = !playing
+        }}>
+        Learning Rate:
+        <input type="number" bind:value={$learningRate}>
+        Delay (ms):
+        <input type="number" bind:value={$delay}>
     </div>
 </main>
 
@@ -109,5 +129,11 @@
                 "line line"
                 "mb cost";
         }
+    }
+    
+    .controls {
+        position: absolute;
+        top: 8px;
+        right: 8px;
     }
 </style>

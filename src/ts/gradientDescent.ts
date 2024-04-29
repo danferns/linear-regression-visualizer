@@ -36,15 +36,18 @@ export class GradientDescent {
         m: number,
         b: number,
         iterations: number,
-        onStep: (m: number, b: number) => Promise<void> = async () => {
-            return;
+        onStep: (m: number, b: number) => Promise<boolean> = async () => {
+            return false;
         }
     ) {
         for (let i = 0; i < iterations; i++) {
             const { m: newM, b: newB } = this.step(m, b);
             m = newM;
             b = newB;
-            await onStep(m, b);
+            const trainingDisabled = await onStep(m, b)
+            if (trainingDisabled) {
+                break
+            }
         }
         return { m, b };
     }

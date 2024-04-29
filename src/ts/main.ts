@@ -4,6 +4,7 @@ import { data } from "./getData";
 import { GradientDescent } from "./gradientDescent";
 import CostXML from "../data/costXML";
 import { COLORS } from "./colorScheme";
+import { writable } from "svelte/store";
 
 declare global {
     interface Window {
@@ -15,9 +16,22 @@ declare global {
 }
 
 let line, cost, mb;
+let gradientDescent, m, b;
+let delayValue = 50;
+
+export const learningRate = writable(0.01);
+export const delay = writable(50);
+
+learningRate.subscribe((val) => {
+    if (gradientDescent) gradientDescent.learningRate = val;
+})
+
+delay.subscribe((val) => {
+    delayValue = val
+})
 
 export async function init() {
-    const gradientDescent = initGradientDescent();
+    gradientDescent = initGradientDescent();
 
     line = window.line;
     cost = window.cost;
@@ -37,8 +51,7 @@ export async function init() {
     cost.setColor("c", ...COLORS.cost);
 
     // set up mb plane, and link it to line
-    const m = 1,
-        b = 1;
+    m = 1, b = 1;
     mb.evalCommand(`m = ${m}`);
     mb.evalCommand(`b = ${b}`);
     mb.evalCommand("M = (m, 0)");
@@ -72,7 +85,12 @@ export async function init() {
     }
     
     cost.setColor("Cost", ...COLORS.line);
+    // startTraining();
+}
 
+export let trainingDisabled = false;
+export async function startTraining() {
+    trainingDisabled = false;
     const { m: newM, b: newB } = await gradientDescent.train(
         m,
         b,
@@ -82,9 +100,13 @@ export async function init() {
     console.log(`m: ${newM}, b: ${newB}`);
 }
 
+export function stopTraining() {
+    trainingDisabled = true;
+}
+
 window.mbUpdated = function () {
-    const m = mb.getXcoord("M");
-    const b = mb.getYcoord("B");
+    m = mb.getXcoord("M");
+    b = mb.getYcoord("B");
     setRepainting(false);
     line.evalCommand(`f(x) = ${m} * x + ${b}`);
     cost.evalCommand(`Cost = (${m}, ${b}, c(${m}, ${b}))`);
@@ -105,7 +127,8 @@ async function onDescendStep(m: number, b: number) {
     mb.evalCommand(`m = ${m}`);
     mb.evalCommand(`b = ${b}`);
     setRepainting(true);
-    await wait(1);
+    await wait(delayValue);
+    return trainingDisabled
 }
 
 function wait(ms: number) {
